@@ -1,2 +1,3 @@
-# 2019-SKKU-Algorithm-TeamProject
-Airline Reservation System with 2 more team members
+# 2019-SKKU-Algorithm
+## Team Project
+Airline Reservation System
