@@ -3,12 +3,20 @@
 #include <stdlib.h>
 #include "Path.h"
 
+// Constructor
+Path::Path(char src, char dst)
+{
+    this->src = src;
+    this->dst = dst;
+}
+
 // Add path node to the end of the linked list
-void Path::add(char city, int depature_time)
+void Path::add(char city, int depature_time, int arrival_time)
 {
     pnode *new_node = (pnode *)malloc(sizeof(pnode));
     new_node->city = city;
     new_node->departure_time = depature_time;
+    new_node->arrival_time = arrival_time;
     new_node->next = NULL;
 
     if (path == NULL)
@@ -33,12 +41,13 @@ void Path::add(char city, int depature_time)
 void Path::print()
 {
     pnode *cur = path;
-    printf("Path\n");
-    printf("%c ", cur->city);
+    
+    printf("Path(source: %c / destination: %c)\n", src, dst);
+    printf("%c(dep: %d, arr: %d) ", cur->city, cur->departure_time, cur->arrival_time);
 
     while (cur->next != NULL)
     {
         cur = cur->next;
-        printf("-> %c ", cur->city);
+        printf("-> %c(dep: %d, arr: %d) ", cur->city, cur->departure_time, cur->arrival_time);
     }
 }

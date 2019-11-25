@@ -94,7 +94,7 @@ void Graph::print()
 // Find shortest path using Dijkstra algorithm
 Path Graph::find_path(char src, char dst, int depature_time)
 {
-    Path path;
+    Path path = Path(src, dst);
 
     return path;
 }
