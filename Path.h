@@ -8,7 +8,7 @@ typedef struct pathnode
     int departure_time;
     int arrival_time;
     struct pathnode *next;
-} pnode;
+} pathnode;
 
 class Path
 {
@@ -16,7 +16,7 @@ private:
 
     char src;
     char dst;
-    pnode *path = NULL;
+    pathnode *path = NULL;
 
 public:
 
