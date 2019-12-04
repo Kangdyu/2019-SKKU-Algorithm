@@ -14,8 +14,10 @@ class Path
 {
 private:
 
+    int size = 0;
     char src;
     char dst;
+    int flight_time = 0;
     pathnode *path = NULL;
 
 public:
@@ -32,6 +34,7 @@ public:
     /* getter */
     char get_src() { return src; }
     char get_dst() { return dst; }
+    int get_size() { return size; }
     /* ====== */
 };
 

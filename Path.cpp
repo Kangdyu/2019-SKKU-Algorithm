@@ -10,31 +10,18 @@ Path::Path(char src, char dst)
     this->dst = dst;
 }
 
-// Add path node to the end of the linked list
-void Path::add(char city, int depature_time, int arrival_time)
+// Add path node to the head of the linked list
+void Path::add(char city, int departure_time, int arrival_time)
 {
     pathnode *new_node = (pathnode *)malloc(sizeof(pathnode));
     new_node->city = city;
-    new_node->departure_time = depature_time;
+    new_node->departure_time = departure_time;
     new_node->arrival_time = arrival_time;
-    new_node->next = NULL;
+    new_node->next = path;
+    path = new_node;
 
-    if (path == NULL)
-    {
-        path = new_node;
-        return;
-    }
-
-    pathnode *target = NULL;
-    pathnode *cur = path;
-
-    while (cur != NULL)
-    {
-        target = cur;
-        cur = cur->next;
-    }
-
-    target->next = new_node;
+    this->flight_time += (arrival_time - departure_time);
+    size++;
 }
 
 // Print path

@@ -34,7 +34,7 @@ public:
     void print();
 
     // get queue size
-    int size();
+    int get_size();
 
 };
 

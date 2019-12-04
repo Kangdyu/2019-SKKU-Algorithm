@@ -7,6 +7,8 @@
 typedef struct graphnode
 {
     char city;
+    int x;
+    int y;
     int distance;
     struct graphnode *next;
 } graphnode;
@@ -18,12 +20,11 @@ private:
     static const int VERTEX_CNT = 26;
     static const int EDGE_CNT = 100;
     static const int RANDOM_SEED = 324798432;
+    static const int INF = 2147483647;
 
     graphnode **vertices;
     // Maybe need timetable in here or in find_path function's parameter
     // Timetable tt;
-    int distance[VERTEX_CNT];
-    int visit[VERTEX_CNT];
 
 public:
 
@@ -41,8 +42,7 @@ public:
 
     // Find shortest path using Dijkstra algorithm
     // Maybe need timetable in this function's parameter or member variable of this class
-    // What if 31 -> 1?
-    Path find_path(char source, char destination, int depature_time);
+    Path find_path(char source, char destination, int depature_date);
 };
 
 #endif
