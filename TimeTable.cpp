@@ -30,4 +30,17 @@ int TimeTable::seek(int src, int dst, int date) {
 			return timetable[i][date];
 		}
 	}
+	return -1;
+}
+
+void TimeTable::print()
+{
+	for (int i = 0; i < 200; i++)
+	{
+		printf("%3d%3d", source[i], destination[i]);
+		for (int j = 0; j < 31; j++)
+			printf("%5d", timetable[i][j]);
+		printf("\n");
+	}
+	printf("\n");
 }

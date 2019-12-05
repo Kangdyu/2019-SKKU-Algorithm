@@ -45,7 +45,7 @@ void PriorityQueue::heapify_down(int index)
     }
 }
 
-void PriorityQueue::push(int city, int weight)
+void PriorityQueue::push(int city, int weight, int distance, int date, int time)
 {
     if (heap_size >= HEAP_MAX)
     {
@@ -55,6 +55,8 @@ void PriorityQueue::push(int city, int weight)
     heapnode new_node;
     new_node.city = city;
     new_node.weight = weight;
+    new_node.date = date;
+    new_node.time = time;
 
     min_heap[heap_size] = new_node;
     heapify_up(heap_size);
@@ -85,10 +87,10 @@ heapnode PriorityQueue::pop()
 void PriorityQueue::print()
 {
     for (int i = 0; i < heap_size; i++)
-        printf("{%d, %d}\n", min_heap[i].city, min_heap[i].weight);
+        printf("{%d, %d, %d, %d, %d}\n", min_heap[i].city, min_heap[i].weight, min_heap[i].distance, min_heap[i].date, min_heap[i].time);
 }
 
-int PriorityQueue::size()
+int PriorityQueue::get_size()
 {
     return heap_size;
 }

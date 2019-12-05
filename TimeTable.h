@@ -18,6 +18,8 @@ public:
 	void insert_city_info(int src, int dst);
 
 	int seek(int src, int dst, int date);
+
+	void print();
 };
 
 #endif
