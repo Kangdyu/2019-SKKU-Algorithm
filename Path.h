@@ -7,6 +7,7 @@ typedef struct pathnode
     char city;
     int departure_time;
     int arrival_time;
+    int date;
     struct pathnode *next;
 } pathnode;
 
@@ -26,7 +27,7 @@ public:
     Path(char src, char dst);
 
     // Add path
-    void add(char city, int depature_time, int arrival_time);
+    void add(pathnode pnode);
 
     // Print path
     void print();

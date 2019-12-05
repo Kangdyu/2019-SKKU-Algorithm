@@ -18,7 +18,7 @@ int main()
 
     printf("\n");
     // Make path object
-    Path path = graph.find_path('a', 'y', 0, tt);
+    Path path = graph.find_path('a', 'y', 31, tt);
     path.print();
 
     return 0;

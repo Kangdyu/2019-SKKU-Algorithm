@@ -28,7 +28,7 @@ public:
     void heapify_down(int index);
 
     // push into queue
-    void push(int city, int weight, int destination, int date, int time);
+    void push(int city, int weight, int distance, int date, int time);
 
     // pop queue and get min heap node
     heapnode pop();

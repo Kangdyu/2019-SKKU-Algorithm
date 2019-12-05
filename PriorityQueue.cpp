@@ -55,6 +55,7 @@ void PriorityQueue::push(int city, int weight, int distance, int date, int time)
     heapnode new_node;
     new_node.city = city;
     new_node.weight = weight;
+    new_node.distance = distance;
     new_node.date = date;
     new_node.time = time;
 

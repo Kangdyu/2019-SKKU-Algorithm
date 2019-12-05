@@ -126,45 +126,49 @@ Path Graph::find_path(char source, char destination, int departure_date, TimeTab
     Path path = Path(source, destination);
     PriorityQueue pq;
     int distance[VERTEX_CNT];
-    int prev[VERTEX_CNT];
+    pathnode prev[VERTEX_CNT];
     int src = source - 97;
     int dst = destination - 97;
-    int date = departure_date;
+    int date = departure_date - 1;
 
     for (int i = 0; i < VERTEX_CNT; i++)
     {
         distance[i] = INF;
-        prev[i] = -1;
+        prev[i].city = -1;
     }
     distance[src] = 0;
-    pq.push(src, 0, date, 0, 0);
+    pq.push(src, 0, 0, date, 0);
 
     while (pq.get_size() != 0)
     {
-        //pq.print();
         heapnode cur = pq.pop();
         int cur_city = cur.city;
         int cur_weight = cur.weight;
         int cur_date = cur.date;
         // convert distance to time (500km/h)
-        int cur_time = cur.time + ceil(cur.distance/500.0 * 6);
+        int cur_time = cur.time + ceil(cur.distance/500.0 * 60);
+        //printf("cur: %c, weight: %d, date: %d, dist: %d, time: %d\n", cur_city + 97, cur_weight, cur_date, cur.distance, cur_time);
 
         graphnode *adj = vertices[cur_city]->next;
         while (adj != NULL)
         {
-            if (prev[cur_city] == adj->city - 97)
+            if (prev[cur_city].city == adj->city - 97)
             {
                 adj = adj->next;
-                break;
+                continue;
             }
+            int this_date = cur_date;
             int adj_city = adj->city - 97;
-            int dep_time = tt.seek(cur_city, adj_city, cur_date);
+            int dep_time = tt.seek(cur_city, adj_city, this_date);
             int wait_weight = dep_time - cur_time;
+            //printf("adj: %c, dep_time: %d, ww: %d, date: %d\n", adj->city, dep_time, wait_weight, this_date);
             if (dep_time < cur_time)
             {
                 wait_weight += (1440 - dep_time);
-                dep_time = tt.seek(cur_city, adj_city, ++cur_date);
+                this_date = (this_date + 1) % 31;
+                dep_time = tt.seek(cur_city, adj_city, this_date);
                 wait_weight += dep_time;
+                //printf("revised: adj: %c, dep_time: %d, ww: %d, date: %d\n", adj->city, dep_time, wait_weight, this_date);
             }
             // convert time to distance
             wait_weight = ceil(wait_weight/60.0) * 500;
@@ -172,18 +176,29 @@ Path Graph::find_path(char source, char destination, int departure_date, TimeTab
             if (distance[adj_city] > adj->distance + distance[cur_city] + wait_weight)
             {
                 distance[adj_city] = adj->distance + distance[cur_city] + wait_weight;
-                pq.push(adj_city, distance[adj_city], adj->distance, cur_date, dep_time);
-                prev[adj_city] = cur_city;
+                pq.push(adj_city, distance[adj_city], adj->distance, this_date, dep_time);
+                prev[adj_city].city = cur_city + 97;
+                prev[adj_city].departure_time = dep_time;
+                prev[adj_city].arrival_time = dep_time + ceil(adj->distance/500.0 * 60);
+                if (prev[adj_city].arrival_time >= 1440)
+                {
+                    prev[adj_city].arrival_time %= 1440;
+                    prev[adj_city].date = (this_date + 1) % 31 + 1;
+                }
+                else
+                {
+                    prev[adj_city].date = (this_date) % 31 + 1;
+                }
             }
             adj = adj->next;
         }
     }
 
-    path.add(dst + 97, 0, 0);
-    while (prev[dst] != -1)
+    while (prev[dst].city != -1)
     {
-        path.add(prev[dst] + 97, 0, 0);
-        dst = prev[dst];
+        path.add(prev[dst]);
+        dst = prev[dst].city - 97;
     }
+
     return path;
 }
