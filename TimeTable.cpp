@@ -4,10 +4,12 @@
 #include "TimeTable.h"
 
 void TimeTable::random_generate() {
-	srand(time(NULL));
+	srand(7537);
+	//srand(time(NULL));
 	for (int i = 0; i < 200; i++) {
 		for (int j = 0; j < 31; j++) {
-			timetable[i][j] = rand() % 1440;
+			timetable[i][j] = rand() % 48;
+			timetable[i][j] *= 30;
 		}
 	}
 }
@@ -30,4 +32,17 @@ int TimeTable::seek(int src, int dst, int date) {
 			return timetable[i][date];
 		}
 	}
+	return -1;
+}
+
+void TimeTable::print()
+{
+	for (int i = 0; i < 200; i++)
+	{
+		printf("%3c%3c", source[i] + 97, destination[i] + 97);
+		for (int j = 0; j < 31; j++)
+			printf("%5d", timetable[i][j]);
+		printf("\n");
+	}
+	printf("\n");
 }

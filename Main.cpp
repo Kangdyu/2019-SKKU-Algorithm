@@ -2,18 +2,23 @@
 #include "Graph.h"
 #include "Path.h"
 #include "PriorityQueue.h"
+#include "TimeTable.h"
 
 int main()
 {
-    // Make graph object
+    TimeTable tt;
     Graph graph;
 
-    graph.random_generate();
+    tt.random_generate();
+
+    // Make graph object
+    graph.random_generate(&tt);
+    tt.print();
     graph.print();
 
     printf("\n");
     // Make path object
-    Path path = graph.find_path('y', 'j', 1);
+    Path path = graph.find_path('a', 'y', 31, tt);
     path.print();
 
     return 0;
