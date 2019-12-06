@@ -23,20 +23,20 @@ private:
 
 public:
 
-    // Constructor
-    Path(char src, char dst);
+    /* Constructor */
+    //Path(char src, char dst);
+    void init(char src, char dst);
 
-    // Add path
+    /* Add path node to the head of the linked list */
     void add(pathnode pnode);
 
-    // Print path
+    /* Print path */
     void print();
 
-    /* getter */
+    /* getters */
     char get_src() { return src; }
     char get_dst() { return dst; }
     int get_size() { return size; }
-    /* ====== */
 };
 
 #endif

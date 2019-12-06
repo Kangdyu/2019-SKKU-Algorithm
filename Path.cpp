@@ -3,14 +3,19 @@
 #include <stdlib.h>
 #include "Path.h"
 
-// Constructor
+/* Constructor 
 Path::Path(char src, char dst)
+{
+    this->src = src;
+    this->dst = dst;
+}*/
+void Path::init(char src, char dst)
 {
     this->src = src;
     this->dst = dst;
 }
 
-// Add path node to the head of the linked list
+/* Add path node to the head of the linked list */
 void Path::add(pathnode pnode)
 {
     pathnode *new_node = (pathnode *)malloc(sizeof(pathnode));
@@ -21,6 +26,7 @@ void Path::add(pathnode pnode)
     new_node->next = path;
     path = new_node;
 
+    /* calculate flight time */
     if (new_node->arrival_time < new_node->departure_time)
     {
         flight_time += (new_node->arrival_time + 1440 - new_node->departure_time);
@@ -32,7 +38,7 @@ void Path::add(pathnode pnode)
     size++;
 }
 
-// Print path
+/* Print path */
 void Path::print()
 {
     pathnode *cur = path;

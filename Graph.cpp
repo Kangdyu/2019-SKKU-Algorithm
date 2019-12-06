@@ -7,7 +7,7 @@
 #include "Graph.h"
 #include "PriorityQueue.h"
 
-// Constructor. Initialize graph setting
+/* Constructor. Initialize graph settings */
 Graph::Graph()
 {
     srand(RANDOM_SEED);
@@ -22,7 +22,7 @@ Graph::Graph()
     }
 }
 
-// Make bi-directional edge between node1 and node2 with distance
+/* Make bi-directional edge between node1 and node2 with distance */
 void Graph::input_node(graphnode *node1, graphnode *node2, int distance)
 {
     graphnode *new_node1 = (graphnode *)malloc(sizeof(graphnode));
@@ -38,7 +38,8 @@ void Graph::input_node(graphnode *node1, graphnode *node2, int distance)
     node2->next = new_node2;
 }
 
-// Randomly generate city's coordinates and graph edges
+/* Randomly generate city's coordinates and graph edges
+ * Also, set time table's city information */
 void Graph::random_generate(TimeTable *tt)
 {
     int xs[VERTEX_CNT];
@@ -47,13 +48,14 @@ void Graph::random_generate(TimeTable *tt)
     int remained_edges = 100;
     int vertices_in_2d[VERTEX_CNT][VERTEX_CNT] = { 0, };
 
+    /* 1. Initialize settings */
     for (int i = 0; i < VERTEX_CNT; i++)
     {
         xs[i] = -1;
         ys[i] = -1;
     }
 
-    // generate city's coordinates
+    /* 2. Generate city's coordinates */
     for (int i = 0; i < VERTEX_CNT; i++)
     {
         int x = rand() % 6001;
@@ -77,11 +79,11 @@ void Graph::random_generate(TimeTable *tt)
         vertices[i]->x = x;
         vertices[i]->y = y;
     }
-    // debugging
+    /* debugging
     for (int i = 0; i < VERTEX_CNT; i++)
         printf("city %c: (%d, %d)\n", vertices[i]->city, vertices[i]->x, vertices[i]->y);
-
-    // generate edges
+    */
+    /* 3. Generate edges */
     for (int i = 0; i < VERTEX_CNT && remained_edges > 0; i++)
     {
         for (int j = 0; j < VERTEX_CNT && remained_edges > 0; j++)
@@ -102,7 +104,7 @@ void Graph::random_generate(TimeTable *tt)
     }
 }
 
-// Print graph in linked list format
+/* Print graph in linked list format */
 void Graph::print()
 {
     for (int i = 0; i < VERTEX_CNT; i++)
@@ -118,19 +120,28 @@ void Graph::print()
     }
 }
 
-// Find shortest path using Dijkstra algorithm
-// weight: pathnode's distance
-// transfer wait time will be converted to distance at each node (calculate with 500km/h)
+/* Find shortest path using Dijkstra algorithm
+ * Dijkstra algorithm's graph weight: distance between two cities + transfer wait time
+ * Return: Path object (has shortest path information) */
 Path Graph::find_path(char source, char destination, int departure_date, TimeTable tt)
 {
-    Path path = Path(source, destination);
+    // will be returned
+    Path path;
+    path.init(source, destination);
+
+    // priority queue for dijkstra
     PriorityQueue pq;
+    // store shortest distance from source to any cities
     int distance[VERTEX_CNT];
+    // pathnode array for back-tracking. will be added to return variable 'path'
     pathnode prev[VERTEX_CNT];
+    /* convert char to int (for array index) */
     int src = source - 97;
     int dst = destination - 97;
+    // to use array(start from 0), subtract 1
     int date = departure_date - 1;
 
+    /* 1. Initialize Dijkstra settings */
     for (int i = 0; i < VERTEX_CNT; i++)
     {
         distance[i] = INF;
@@ -139,16 +150,22 @@ Path Graph::find_path(char source, char destination, int departure_date, TimeTab
     distance[src] = 0;
     pq.push(src, 0, 0, date, 0);
 
+    /* 2. Dijkstra algorithm (until queue is empty) */
     while (pq.get_size() != 0)
     {
+        /* 2-1. Get current city's information */
         heapnode cur = pq.pop();
         int cur_city = cur.city;
         int cur_weight = cur.weight;
         int cur_date = cur.date;
-        // convert distance to time (500km/h)
+        // current time after arriving in this city from previous city
         int cur_time = cur.time + ceil(cur.distance/500.0 * 60);
-        //printf("cur: %c, weight: %d, date: %d, dist: %d, time: %d\n", cur_city + 97, cur_weight, cur_date, cur.distance, cur_time);
-
+        if (cur_time >= 1440)
+        {
+            cur_time %= 1440;
+            cur_date = (cur_date + 1) % 31;
+        }
+        /* 2-2. Check all adjacent cities */
         graphnode *adj = vertices[cur_city]->next;
         while (adj != NULL)
         {
@@ -157,43 +174,52 @@ Path Graph::find_path(char source, char destination, int departure_date, TimeTab
                 adj = adj->next;
                 continue;
             }
-            int this_date = cur_date;
+            // arrival date (current city -> adjacent city)
+            int arrival_date = cur_date;
+            // convert char to int (for array index)
             int adj_city = adj->city - 97;
-            int dep_time = tt.seek(cur_city, adj_city, this_date);
+            // seek departure time from time table (current city -> adjacent city)
+            int dep_time = tt.seek(cur_city, adj_city, arrival_date);
+            // additional weight value for considering transfer wait time
             int wait_weight = dep_time - cur_time;
-            //printf("adj: %c, dep_time: %d, ww: %d, date: %d\n", adj->city, dep_time, wait_weight, this_date);
+            // if departure time passed
             if (dep_time < cur_time)
             {
                 wait_weight += (1440 - dep_time);
-                this_date = (this_date + 1) % 31;
-                dep_time = tt.seek(cur_city, adj_city, this_date);
+                arrival_date = (arrival_date + 1) % 31;
+                // seek next day's departure time
+                dep_time = tt.seek(cur_city, adj_city, arrival_date);
                 wait_weight += dep_time;
-                //printf("revised: adj: %c, dep_time: %d, ww: %d, date: %d\n", adj->city, dep_time, wait_weight, this_date);
             }
+            
             // convert time to distance
             wait_weight = ceil(wait_weight/60.0) * 500;
 
+            // if this path is shorter than previous path, update information
             if (distance[adj_city] > adj->distance + distance[cur_city] + wait_weight)
             {
                 distance[adj_city] = adj->distance + distance[cur_city] + wait_weight;
-                pq.push(adj_city, distance[adj_city], adj->distance, this_date, dep_time);
+                pq.push(adj_city, distance[adj_city], adj->distance, arrival_date, dep_time);
+                /* store informations for back-tracking */
                 prev[adj_city].city = cur_city + 97;
                 prev[adj_city].departure_time = dep_time;
                 prev[adj_city].arrival_time = dep_time + ceil(adj->distance/500.0 * 60);
                 if (prev[adj_city].arrival_time >= 1440)
                 {
                     prev[adj_city].arrival_time %= 1440;
-                    prev[adj_city].date = (this_date + 1) % 31 + 1;
+                    prev[adj_city].date = (arrival_date + 1) % 31 + 1;
                 }
                 else
                 {
-                    prev[adj_city].date = (this_date) % 31 + 1;
+                    prev[adj_city].date = (arrival_date) % 31 + 1;
                 }
             }
+            // check next adjacent city
             adj = adj->next;
         }
     }
 
+    /* 3. Add path using the result of Dijkstra's algorithm (back-tracking) */
     while (prev[dst].city != -1)
     {
         path.add(prev[dst]);

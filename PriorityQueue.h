@@ -23,20 +23,22 @@ public:
     
     void swap(heapnode *n1, heapnode *n2);
 
+    /* Make this heap min heap (bottom to top) */
     void heapify_up(int index);
 
+    /* Make this heap min heap (top to bottom) */
     void heapify_down(int index);
 
-    // push into queue
+    /* Push new heap node and make min heap */
     void push(int city, int weight, int distance, int date, int time);
 
-    // pop queue and get min heap node
+    /* Return minimum heap node, and then keep this heap min heap */
     heapnode pop();
 
-    // print prioirty queue
+    /* Print priority queue */
     void print();
 
-    // get queue size
+    /* Get priority queue's size */
     int get_size();
 
 };

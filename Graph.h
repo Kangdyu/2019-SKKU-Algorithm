@@ -27,20 +27,22 @@ private:
 
 public:
 
-    // Constructor. Initialize graph setting
+    /* Constructor. Initialize graph settings */
     Graph();
 
-    // Make bi-directional edge between node1 and node2 with distance
+    /* Make bi-directional edge between node1 and node2 with distance */
     void input_node(graphnode *node1, graphnode *node2, int distance);
 
-    // Randomly generate graph edges
+    /* Randomly generate city's coordinates and graph edges
+     * Also, set time table's city information */
     void random_generate(TimeTable *tt);
 
-    // Print graph in linked list format
+    /* Print graph in linked list format */
     void print();
 
-    // Find shortest path using Dijkstra algorithm
-    // Maybe need timetable in this function's parameter or member variable of this class
+    /* Find shortest path using Dijkstra algorithm
+     * Dijkstra algorithm's graph weight: distance between two cities + transfer wait time
+     * Return: Path object (has shortest path information) */
     Path find_path(char source, char destination, int departure_date, TimeTable tt);
 };
 

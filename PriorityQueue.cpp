@@ -10,6 +10,7 @@ void PriorityQueue::swap(heapnode *n1, heapnode *n2)
     *n2 = tmp;
 }
 
+/* Make this heap min heap (bottom to top) */
 void PriorityQueue::heapify_up(int index)
 {
     int parent = (index - 1) / 2;
@@ -21,6 +22,7 @@ void PriorityQueue::heapify_up(int index)
     }
 }
 
+/* Make this heap min heap (top to bottom) */
 void PriorityQueue::heapify_down(int index)
 {
     int left_child = 2 * index + 1;
@@ -45,6 +47,7 @@ void PriorityQueue::heapify_down(int index)
     }
 }
 
+/* Push new heap node and make min heap */
 void PriorityQueue::push(int city, int weight, int distance, int date, int time)
 {
     if (heap_size >= HEAP_MAX)
@@ -64,6 +67,7 @@ void PriorityQueue::push(int city, int weight, int distance, int date, int time)
     heap_size++;
 }
 
+/* Return minimum heap node, and then keep this heap min heap */
 heapnode PriorityQueue::pop()
 {
     heapnode ret;
@@ -85,12 +89,14 @@ heapnode PriorityQueue::pop()
     return ret;
 }
 
+/* Print priority queue */
 void PriorityQueue::print()
 {
     for (int i = 0; i < heap_size; i++)
         printf("{%d, %d, %d, %d, %d}\n", min_heap[i].city, min_heap[i].weight, min_heap[i].distance, min_heap[i].date, min_heap[i].time);
 }
 
+/* Get priority queue's size */
 int PriorityQueue::get_size()
 {
     return heap_size;
